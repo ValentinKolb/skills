@@ -1,136 +1,141 @@
 ---
 name: docs-writer
-description: Writes and edits all forms of documentation and user-facing text — READMEs, API references, developer guides, changelogs, runbooks, help articles, tooltips, info boxes, form-field descriptions, error messages, empty states, onboarding copy, and any explanatory text a human will read. Classifies each section using the Diátaxis framework (tutorial / how-to / reference / explanation) or as UX microcopy, leads with an overview, tunes tone to the actual reader, and runs a redundancy-and-filler edit pass. Has a Long Mode with per-type coverage checklists so comprehensive docs stay comprehensive instead of long-but-shallow. Use this skill whenever the user asks for documentation, a README, a help page, info text, a tooltip, an error message, a description for an input, or any user-facing explanatory text — even when they don't say the word "documentation," and even for short snippets like a single tooltip or one paragraph of help.
+description: Write or revise end-user documentation and product-facing text, including help articles, onboarding, task guides, troubleshooting, concepts, reference pages, READMEs, tooltips, field hints, errors, empty states, and change notices. Use whenever a user asks for documentation, help content, explanatory UI copy, or a rewrite of existing docs. Ground the result in product truth, organize it around the reader's task, keep coverage and detail balanced, and remove generic LLM prose.
 ---
 
-# docs-writer
+# Docs writer
 
-A skill for writing documentation and user-facing text that is oriented (overview first), right-sized (no filler, no padding), correctly pitched (tone matches the reader), and — when long — actually comprehensive rather than long-and-shallow.
+Create the shortest document that lets the intended reader do, decide, or
+understand the right thing.
 
-It covers two families of output:
-
-- **Technical docs**: READMEs, API/SDK references, developer guides, ADRs, runbooks, changelogs.
-- **End-user microcopy**: tooltips, info boxes, form-field descriptions, error/empty/success states, onboarding text, help-page paragraphs.
-
-The same core problems show up in both: duplication, vague-but-trivial detail, no overview, filler, wrong register, and the long-but-shallow failure. This skill fixes those in a fixed order. Don't skip steps; the order is what prevents the failures.
-
-## The core idea
-
-Most bad documentation fails because the writer started typing before deciding **who reads it, what type of section it is, and what the reader needs first**. The fixes below front-load those decisions, then write, then cut. Writing and cutting are separate passes on purpose — trying to write lean on the first pass produces vague hedging instead of concision.
+Good prose cannot rescue wrong facts, missing topics, or a structure based on
+the product's internals instead of the reader's goal. Solve those problems
+before polishing sentences.
 
 ## Workflow
 
-Follow these steps in order. Steps 0–2 are fast (a few lines of thinking, not output). Steps 3–5 produce and refine the actual text.
+### 1. Inspect before writing
 
-### Step 0 — Pick the mode
+Use the strongest available sources:
 
-| Mode | Use when | Reference |
-|---|---|---|
-| **technical** | README, API/SDK docs, dev guide, ADR, runbook, changelog | `references/structure.md` (incl. README house style) |
-| **microcopy** | tooltip, info box, form-field text, error/empty/success state, onboarding, short help paragraph | `references/microcopy.md` |
-| **long-form** | the user explicitly wants something *comprehensive*, *complete*, *thorough*, or *long* | `references/long-mode.md` (in addition to the above) |
+1. the working product, UI, API, or CLI
+2. current code, tests, schemas, and configuration
+3. existing docs and the project's terminology
+4. support cases, search terms, analytics, or user research
+5. the user's supplied facts
 
-A single document can mix modes (a README with a tooltip-like CLI flag description). When in doubt, classify per *section*, not per document.
+For a rewrite, first identify what is correct, missing, duplicated, misplaced,
+or outdated. Preserve correct content and the existing house style where they
+serve the reader.
 
-### Step 1 — Name the audience (mandatory, ~2 lines, not shown in output)
+Never invent behavior, prerequisites, defaults, limits, UI labels, or recovery
+steps. If a material fact cannot be discovered, ask for it or state the gap.
+Do not hide uncertainty behind vague wording.
 
-Before writing anything, write a short internal note fixing the reader. This is the single highest-leverage step and the one most often skipped:
+### 2. Define the document contract
 
+Privately record:
+
+```text
+Reader:
+Situation:
+Goal:
+Success:
+Already knows:
+Must learn:
+Channel:
+Language / house style:
+Scope:
+Not in scope:
+Sources:
 ```
-Audience: <who they are>
-Knows already: <what you can assume>
-Wants to: <the task they came to do>
-Reading level / register: <target>
+
+Then phrase the user need:
+
+```text
+As <reader>, I need to <task or answer>, so I can <outcome>.
 ```
 
-Every later decision — which jargon is fine, how much to explain, how short to go — follows from this. If the user hasn't told you the audience and it isn't obvious from context, ask one quick question rather than guessing. See `references/audience.md` for tone selectors per reader type, jargon rules, and reading-level targets.
+Write the real questions the document must answer. Use one question for
+microcopy and usually 3–7 for a page. These questions are the coverage plan.
+Do not show this worksheet unless the user asks for it.
 
-### Step 2 — Classify each section (Diátaxis)
+### 3. Choose the content shape
 
-Decide what *kind* of thing each section is. Mixing kinds in one section is the root cause of the "vague + irrelevant detail" problem — a reference paragraph that wanders into rationale, or a tutorial that dumps a config table.
+Choose from the reader's situation, not from a preferred framework:
 
-- **Tutorial** — learning-oriented. A guided lesson that gets a beginner to a first success. Opens with what they'll have built by the end.
-- **How-to** — task-oriented. Steps to achieve a specific goal, assuming some competence. Opens with the goal and prerequisites.
-- **Reference** — information-oriented. Complete, dry, factual description of an API/options/fields. Opens with one line saying what it catalogs.
-- **Explanation** — understanding-oriented. The why, the trade-offs, the mental model. Opens with the topic and scope.
-- **Microcopy** — action-oriented, in-product. Helps the user act *right now* at the point of need.
+- **Overview:** orientation and routes into the reader's common goals
+- **Task guide:** a known goal completed through ordered actions
+- **Getting started:** a safe first success for a new user
+- **Concept page:** a mental model needed to make decisions
+- **Troubleshooting:** diagnosis and recovery from an observable problem
+- **Reference:** fast, consistent lookup of facts
+- **Microcopy:** help at the exact point of interaction
+- **Change notice:** impact and required action for an affected user
 
-Each type permits a *different* kind of detail. Reference is allowed to be exhaustive; explanation is allowed to digress into rationale; a tutorial must not. Full rules, opener templates, and the common confusions in `references/diataxis.md`.
+Read [`references/patterns.md`](references/patterns.md) only for the selected
+shape.
 
-### Step 3 — Structure before prose (the "overview first" fix)
+One page should serve one primary user need. Split unrelated needs. If several
+pages are required, organize them by user goals or journey stages and add only
+the navigation readers need.
 
-Write the skeleton before the sentences. Three rules, in priority order:
+### 4. Plan coverage and depth
 
-1. **One-sentence opener.** The first sentence says *what this is, what it's for, and who it's for* — enough that a reader can decide in five seconds whether to keep reading. No throat-clearing ("This document will walk you through…"), no history, no marketing.
-2. **Cognitive funnel.** General before specific, common before rare, frequent before edge-case. The reader who stops halfway should still have gotten the important part. This is the inverted-pyramid principle: front-load the conclusion, then support it.
-3. **Above-the-fold orientation.** Any document over ~300 words gets a short table of contents or a 3–7 item overview near the top, so the reader sees the shape before the detail.
+Turn the reader questions into an outline before drafting. Order them:
 
-Inside every section, apply the same funnel: lead with the point, then elaborate. Details, conventions, and the README house style are in `references/structure.md`.
+1. essential to start or avoid harm
+2. common path
+3. common decisions and failures
+4. rare or advanced cases
 
-### Step 4 — Write to the budget
+Give similar topics similar treatment. Go deeper only when frequency, risk, or
+decision complexity justifies it. A detail belongs when it helps the reader
+act, choose, recognize a state, avoid a mistake, or build the mental model
+needed for those things.
 
-Write the content now. Match length to the artifact — these are starting budgets, not hard caps, and the reader's need overrides them:
+Do not add a table of contents by word count. Add one when the page is
+non-linear or long enough that readers need to jump between sections.
 
-- Tooltip: ≤ 12 words, one idea.
-- Form-field description: one sentence, ≤ 15 words.
-- Error message: one sentence on what happened + one on what to do.
-- Empty state: ≤ 2 sentences — what's missing + the next action.
-- README intro paragraph: ≤ 60 words; must convey what + why + for whom.
-- Section heading: ≤ 8 words, sentence case, no trailing punctuation.
+### 5. Draft for use
 
-Microcopy templates and the reasoning behind each budget are in `references/microcopy.md`.
+- Lead with the answer, outcome, or action.
+- Use headings that name reader tasks or questions.
+- Put conditions before the instruction they affect.
+- Use numbered steps only for sequences.
+- After meaningful steps, show how to recognize success.
+- Put warnings before the action and name the consequence.
+- Use exact product labels and one term per concept.
+- Prefer concrete verbs, short paragraphs, and the reader's vocabulary.
+- Use examples only when accurate and more useful than another explanation.
+- Use a screenshot or diagram when spatial relationships matter; do not
+  decorate.
 
-### Step 5 — Edit pass (always run this)
+Delete meta-narration, generic introductions, repeated conclusions, marketing
+claims, unsupported adjectives, and phrases such as “simply”, “just”, “easy”,
+“powerful”, “seamless”, or “in order to”. Do not replace them with different
+filler.
 
-The draft is the raw material; this pass makes it good. Run these passes **in this order** — re-reading the whole text each time with one job. Doing them separately is what makes each one effective. Full procedure and rationale in `references/editing.md`; concrete word lists in `references/banned-words.md`.
+### 6. Verify before delivery
 
-1. **Coverage** *(long-form only)* — does it cover what this doc-type requires? See Step 6.
-2. **Redundancy** — say each thing once. One canonical term per concept (don't elegant-variation your way into three names for the same noun). Delete sentences the reader already knows from a sentence above. Merge sections that overlap.
-3. **Filler** — cut words that carry no information. Replace wordy phrases with short ones (`utilize → use`, `in order to → to`, `at this point in time → now`). Delete hedges and intensifiers (`very`, `quite`, `simply`, `just`, `basically`) unless they change meaning.
-4. **Specificity** — every vague qualifier is either made concrete (give the number, the type, the name) or deleted. Conversely, every hyper-specific detail that no reader decision depends on gets cut or moved to a reference page. The test: *does anyone act differently because this detail is here?* If not, it's noise.
-5. **Audience fit** — read it as the Step-1 reader. Too technical? Define or replace the jargon. Too casual for the context? Tighten. Wrong reading level? Shorten sentences. Check for condescension (`obviously`, `of course`, `just`) and bias (`master/slave → primary/replica`, `blacklist/whitelist → blocklist/allowlist`).
+Do not deliver until the relevant checks pass:
 
-Treat word-list hits as *flags to review, not auto-replacements*. "Many clients connect" is fine; the list flags "many" so you check it, not so you delete it reflexively.
+- **Accuracy:** Every claim about product behavior or user constraints is
+  supported by a source.
+- **Task success:** Following the page reaches the stated outcome.
+- **Coverage:** Every planned reader question is answered.
+- **Balance:** Depth follows frequency, risk, and decision value; no random
+  deep dives.
+- **Structure:** Headings alone form a useful map; related content is together.
+- **Signal:** Every paragraph adds a fact, action, decision, example, or needed
+  explanation.
+- **Accessibility:** Instructions do not depend only on color, position, or an
+  image; links and headings make sense out of context.
+- **Verification:** Commands, code, links, and UI paths are checked when the
+  environment permits it.
+- **Durability:** Version-sensitive claims are identified, and the page does not
+  create a conflicting second source of truth.
 
-### Step 6 — Long mode (only when comprehensive output is requested)
-
-This is the fix for the specific failure where "make it thorough" produces something *longer* that still only covers a few things deeply and omits most of what matters. Length is not coverage. When the user asks for comprehensive/complete/long docs:
-
-1. **Outline first.** Produce a numbered outline covering every topic the doc-type requires (see the per-type checklists in `references/long-mode.md`). Show it to the user before writing prose if the doc is large.
-2. **Coverage before depth.** Fill *breadth* first — touch every required topic — then deepen. A comprehensive reference that lists every option briefly beats one that explains three options at length and silently drops the rest.
-3. **Width-not-depth check.** Before polishing, count covered topics against the checklist. Under ~80%? Expand before you refine.
-4. **Reader test** *(optional; for pages over ~800 words or critical help articles)* — if subagents are available, generate 5–10 questions a real reader would ask, hand the doc (only the doc) to a fresh agent, and note what it can't answer. Fix those gaps. Procedure in `references/long-mode.md`.
-
-## House style (default unless the user says otherwise)
-
-These defaults come from analyzing documentation the user considers good, plus the Google and Microsoft developer style guides. They're defaults, not laws — a user's house style wins.
-
-- Sentence-case headings, no trailing punctuation, no emoji prefixes.
-- Second person and imperative for instructions ("Run the server"), present tense, active voice.
-- Terse and declarative. State what the thing is and does; skip "we believe" and "powerful, easy-to-use."
-- Code examples must be runnable and minimal — import + smallest real usage, not a toy that omits the imports.
-- ASCII diagrams over images for architecture; images only where they genuinely beat text (screenshots of a UI, a benchmark plot).
-- Tables only for genuinely tabular data; don't table a two-item list.
-- For READMEs specifically: one-line definition opener → optional status note → Quick Start as the first real section → feature/API sections → minimal end matter. Detail in `references/structure.md`.
-
-## Anti-patterns (don't produce these)
-
-- Marketing adjectives in technical docs ("blazing-fast", "powerful", "seamless", "robust").
-- Emoji-decorated headings, exclamation marks, "Built with ❤️" footers.
-- Meta-narration: "In this section we will…", "This guide is designed to…".
-- A "Features" section that's a bullet list of adjectives with no substance.
-- Synonym churn: calling the same concept three different names across one page.
-- Long-but-shallow: padding a doc to feel thorough while omitting most of what the type requires.
-- Hedging instead of concision: "it might be the case that you may want to perhaps consider" → "consider".
-
-## Reference files
-
-Read the relevant file when its step or mode activates — don't preload everything.
-
-- `references/diataxis.md` — the four doc types in depth, opener templates, how to tell them apart, hybrid pages.
-- `references/structure.md` — inverted pyramid, cognitive funnel, TOC rules, full README house style.
-- `references/microcopy.md` — templates and length budgets for every microcopy type; NN/g's 3 I's and 3 C's.
-- `references/audience.md` — persona template, tone selectors per reader, reading-level targets, jargon and bias rules.
-- `references/editing.md` — the five-pass edit as a repeatable procedure with before/after examples.
-- `references/banned-words.md` — filler, weasel, wordiness, condescension, and bias word lists (as review flags).
-- `references/long-mode.md` — per-type coverage checklists, outline-first workflow, the reader-test procedure.
+For high-risk or substantial documentation, list realistic reader questions
+and test whether the document alone answers them. Treat unanswered questions as
+content defects, not opportunities for more generic prose.
